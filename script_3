@@ -1,0 +1,76 @@
+stage.set_background_color("pink")
+# Lists for storing positions
+position_x = []
+position_y = []
+# Display the necessary data on the screen
+score = 0
+score_board = codesters.Display(score, -200, -200)
+mistakes = 0
+mistakes_board = codesters.Display(mistakes, 200, -200)
+# List of sprites
+hit_list = ["kitten", "skeleton", "bat", "ghost", "jackolantern", "dracula"]
+# Initial position of the first circle
+x = -200
+y = 180
+
+# Draw circles and add their positions to the list
+for i in range(5):
+    for i in range(4):
+        sprite = codesters.Circle(x, y, 75, "black")
+        position_y.append(sprite.get_y())
+        y -= 100
+    position_x.append(sprite.get_x())
+    y = 180
+    x += 100
+
+
+def interval():
+    # Create a random character from the list
+    hit = codesters.Sprite(random.choice(hit_list), random.choice(position_x), random.choice(position_y))
+    hit.set_size(0.8)
+    # Function for clicking on the sprite
+    def click(hit):
+        global score, mistakes
+        name = hit.get_image_name()
+        # Check for clicking on the kitten
+        if name == "kitten":
+            hit.hide()
+            mistakes += 1
+            if mistakes == 3:
+                sprite = codesters.Square(0, 0, 500, "red")
+                text = codesters.Text("You Lose!!!", 0, 0, "white")
+            mistakes_board.update(mistakes)
+        else:
+            hit.hide()
+            score += 1
+            score_board.update(score)
+        # Check for winning and losing conditions
+        if score == 10:
+            stage.remove_all_events()
+            sprite = codesters.Square(0, 0, 500, "pink")
+            text = codesters.Text("You Win!!!", 0, 0, "black")
+            text.set_size(4)
+        if mistakes == 3:
+            stage.remove_all_events()
+            sprite = codesters.Square(0, 0, 500, "red")
+            text = codesters.Text("You Lose!!!", 0, 0, "white")
+            text.set_size(4)
+    hit.event_click(click)
+    stage.wait(2)
+    stage.remove_sprite(hit)
+stage.event_interval(interval, 1)
+
+# Create a circle for aiming
+aim = codesters.Circle(0, 0, 50, "blue")
+aim.set_opacity(0.3)
+
+# Function to track the circle's movement with the cursor
+def mouse_move():
+    x = stage.mouse_x()
+    y = stage.mouse_y()
+    aim.set_position(x, y)
+    
+stage.event_mouse_move(mouse_move)
+
+
+
