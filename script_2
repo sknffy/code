@@ -1,0 +1,115 @@
+#setarea scenei
+stage.disable_right_wall()
+stage.disable_left_wall()
+stage.set_background_color("pink")
+
+#configurarea primului personaj
+robot = codesters.Sprite("robot", 0, 230)
+robot.set_size(0.5)
+robot.flip_up_down()
+robot.set_speed(15)
+
+#folosim înălțimea robotului
+y_robot = robot.get_y()
+
+#configurarea celui de-al doilea personaj
+guy = codesters.Sprite("purpleguy", 0, -230)
+guy.set_size(0.5)
+guy.set_speed(15)
+
+#ia înălțimea caracterului violet
+y_guy = guy.get_y()
+
+b = random.randint(300,500)
+#viteza inițială a figurilor
+speed = -5
+#variabilă pentru finisare
+finish = 0
+
+
+#funcția de mutare a primului caracter
+def flip_robot(sprite):
+    
+    global y_robot
+    #dezactivați funcția pentru a elimina problemele
+    robot.event_key("space", None)
+    #întoarcerea/rotirea personajul
+    sprite.flip_up_down()
+    sprite.set_x_speed(0)
+    #mută personajul direct în sus
+    sprite.glide_to(sprite.get_x(),-y_robot)
+    y_robot = sprite.get_y()
+    #activați capacitatea de mișcare
+    robot.event_key("space", flip_robot)
+    
+#funcție pentru a muta primul caracter
+def flip_guy(sprite):
+    global y_guy
+    guy.event_key("up", None)
+    sprite.flip_up_down()
+    sprite.set_x_speed(0)
+    sprite.glide_to(sprite.get_x(),-y_guy)
+    y_guy = sprite.get_y()
+    guy.event_key("up", flip_guy)
+    
+robot.event_key("space", flip_robot)
+guy.event_key("up", flip_guy)
+
+
+def collision(sprite, hit_sprite):
+    color = hit_sprite.get_color()
+    speed = hit_sprite.get_speed()
+    sprite_name = sprite.get_image_name()
+    #atingând linia de sosire
+    if color == "blue":
+        if sprite_name == "robot":
+            codesters.Text("Robot Wins!!!", 0, 0,"blue").set_size(4)
+            stage.remove_all_events()
+        if sprite_name == "purple guy":
+            codesters.Text("Guy Wins!!!", 0, 0,"red").set_size(4)
+            stage.remove_all_events()
+    #atingerea unui obstacol
+    if color == "red":
+        sprite.set_x_speed(-3)
+    else:
+        sprite.set_x_speed(0)
+
+    
+robot.event_collision(collision)
+guy.event_collision(collision)
+
+def interval():
+    global robot, guy, b, a, finish, speed
+    #accelerarea triunghiurilor
+    speed-=1
+    #variabilă de incrementare pentru terminarea spawn-ului
+    finish += 1
+    
+    if finish == 10:
+        finish_line = codesters.Rectangle(400,0, 50, 500, "blue")
+        finish_line.set_x_speed(-5)
+    #eveniment de ieșire din scenă
+    if robot.get_x()<-270:
+        stage.remove_all_events()
+        codesters.Text("Guy Wins!!!", 0, 0,"blue").set_size(4)
+        
+    elif guy.get_x()<-270:
+        stage.remove_all_events()
+        codesters.Text("Robot Wins!!!", 0, 0,"red").set_size(4)
+        
+    #spawn triunghi
+    sprite = codesters.Triangle(b ,-235, 50,"red")
+    sprite.set_x_speed(speed)
+    sprite = codesters.Triangle(b+random.choice([-400, -200, 200, 400]), 235, 50, "red")
+    sprite.flip_up_down()
+    sprite.set_x_speed(speed)
+    b+=random.randint(300, 350)
+    
+stage.event_interval(interval, 3)
+
+
+
+
+
+
+
