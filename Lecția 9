@@ -1,0 +1,51 @@
+ # Import OpenCV library for computer vision tasks
+import cv2  
+
+# Import NumPy for numerical processing
+import numpy as np  
+
+ # Import pyplot for plotting graphs and images
+from matplotlib import pyplot as plt 
+
+# Load a color image from the specified file path
+image = cv2.imread('photo.png', cv2.IMREAD_COLOR)
+
+# Convert to grayscale to reduce the data volume that needs to be processed
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Save the grayscale image
+cv2.imwrite("gray_image.png", gray_image)
+
+# Initialize an instance of the face classifier
+face_classifier = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+)
+
+# Applying histogram equalization
+equalized_image = cv2.equalizeHist(gray_image)
+
+# Detect faces using the detectMultiScale function
+faces = face_classifier.detectMultiScale(
+   equalized_image, scaleFactor=1.05, minNeighbors=8, minSize=(40, 40)
+)
+
+# Check if any faces were detected
+if len(faces) == 0:
+    print("No faces found")
+else:
+    # Draw rectangles around each detected face
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 4)
+
+    # Convert image back to RGB (color)
+    img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # Display the image
+    plt.figure(figsize=(10,5))
+    plt.imshow(img_rgb)
+    plt.axis('off')
+    plt.title("Faces detected")
+    plt.show()
+
+    # Return face coordinates (optional, depending on need)
+    print("Coordinates of detected faces:",faces)
