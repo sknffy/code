@@ -1,0 +1,46 @@
+import string
+import random
+
+def genereaza_parola():
+    print("--- 🛡️ Bine ai venit la Generatorul de Parole 'The Vault' ---")
+    
+    # 1. Configurarea parametrilor
+    try:
+        lungime = int(input("Câte caractere să aibă parola? (recomandat minim 12): "))
+    except ValueError:
+        print("Te rog introdu un număr valid!")
+        return
+
+    print("\nCe vrei să incluzi în parolă?")
+    include_cifre = input("Adăugăm cifre? (da/nu): ").lower() == "da"
+    include_simboluri = input("Adăugăm simboluri (!@#$)? (da/nu): ").lower() == "da"
+
+    # 2. Construirea setului de caractere
+    caractere = string.ascii_letters  # Include litere mici și mari (a-z, A-Z)
+    
+    if include_cifre:
+        caractere += string.digits    # Adaugă 0-9
+    if include_simboluri:
+        caractere += string.punctuation # Adaugă caractere speciale
+
+    # 3. Generarea parolei
+    parola = ""
+    for i in range(lungime):
+        caracter_aleatoriu = random.choice(caractere)
+        parola += caracter_aleatoriu
+
+    # 4. Afișarea rezultatului
+    print("\n" + "="*30)
+    print(f"🔒 Parola ta generată este: {parola}")
+    print("="*30)
+    
+    # Evaluarea siguranței (Scurtă logică de control)
+    if lungime < 8:
+        print("⚠️ Atenție: Parola este prea scurtă și ușor de spart!")
+    elif lungime >= 12 and include_cifre and include_simboluri:
+        print("✅ Excelent! Aceasta este o parolă foarte puternică.")
+    else:
+        print("💡 Sfat: Adaugă mai multe caractere pentru siguranță maximă.")
+
+# Apelăm funcția pentru a rula programul
+genereaza_parola()
